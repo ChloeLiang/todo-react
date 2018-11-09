@@ -5,6 +5,7 @@ class Item extends React.Component {
     return (
       <li>
         <input onChange={() => onEdit(index, list)} value={word} />
+        <span>{moment().format('L')}</span>
         {<button onClick={() => onDelete(index, list)}>Delete</button>}
         {ongoing && <button onClick={() => onDone(index)}>Done</button>}
       </li>
