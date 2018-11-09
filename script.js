@@ -7,17 +7,30 @@ class List extends React.Component {
   state = {
     list: [],
     word: '',
+    error: '',
   };
 
   changeHandler(event) {
-    this.setState({ word: event.target.value });
-    console.log('change', event.target.value);
+    const word = event.target.value.trim();
+    let { error } = this.state;
+
+    if (word === '') {
+      error = 'Enter at least one character';
+    } else {
+      error = '';
+    }
+
+    this.setState({ word, error });
   }
+
+  handleInputBlur = () => {
+    this.setState({ error: '' });
+  };
 
   handleAddItem = () => {
     let { list, word } = this.state;
 
-    if (word.trim() === '') {
+    if (word === '') {
       return;
     }
 
@@ -28,13 +41,19 @@ class List extends React.Component {
   };
 
   render() {
-    const { list } = this.state;
+    const { list, word, error } = this.state;
 
     console.log('rendering');
+
     return (
       <div className="list">
-        <input onChange={this.changeHandler} value={this.state.word} />
+        <input
+          onChange={this.changeHandler}
+          onBlur={this.handleInputBlur}
+          value={word}
+        />
         <button onClick={this.handleAddItem}>add item</button>
+        <p>{error}</p>
         <ul>
           {list.map((todo, index) => (
             <li key={index}>{todo}</li>
