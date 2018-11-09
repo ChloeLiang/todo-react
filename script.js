@@ -1,3 +1,16 @@
+class Item extends React.Component {
+  render() {
+    const { index, word, onDelete, onEdit } = this.props;
+
+    return (
+      <li>
+        <input onChange={() => onEdit(index)} value={word} />
+        <button onClick={() => onDelete(index)}>Delete</button>
+      </li>
+    );
+  }
+}
+
 class List extends React.Component {
   constructor() {
     super();
@@ -40,8 +53,17 @@ class List extends React.Component {
     this.setState({ list, word });
   };
 
-  handleDelete = todo => {
-    const list = this.state.list.filter(t => t !== todo);
+  handleDelete = index => {
+    let { list } = this.state;
+    list = [...list];
+    list.splice(index, 1);
+    this.setState({ list });
+  };
+
+  handleEdit = index => {
+    const todo = event.target.value;
+    const list = [...this.state.list];
+    list[index] = todo;
     this.setState({ list });
   };
 
@@ -60,10 +82,14 @@ class List extends React.Component {
         <button onClick={this.handleAddItem}>add item</button>
         <p>{error}</p>
         <ul>
-          {list.map((todo, index) => (
-            <li key={index} onClick={() => this.handleDelete(todo)}>
-              {todo}
-            </li>
+          {list.map((word, index) => (
+            <Item
+              key={index}
+              index={index}
+              word={word}
+              onDelete={this.handleDelete}
+              onEdit={this.handleEdit}
+            />
           ))}
         </ul>
       </div>
