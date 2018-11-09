@@ -1,11 +1,12 @@
 class Item extends React.Component {
   render() {
-    const { index, word, onDelete, onEdit } = this.props;
+    const { index, word, list, onDelete, onEdit, onDone, ongoing } = this.props;
 
     return (
       <li>
-        <input onChange={() => onEdit(index)} value={word} />
-        <button onClick={() => onDelete(index)}>Delete</button>
+        <input onChange={() => onEdit(index, list)} value={word} />
+        {<button onClick={() => onDelete(index, list)}>Delete</button>}
+        {ongoing && <button onClick={() => onDone(index)}>Done</button>}
       </li>
     );
   }
@@ -19,6 +20,7 @@ class List extends React.Component {
 
   state = {
     list: [],
+    done: [],
     word: '',
     error: '',
   };
@@ -53,22 +55,30 @@ class List extends React.Component {
     this.setState({ list, word });
   };
 
-  handleDelete = index => {
-    let { list } = this.state;
+  handleDelete = (index, listName) => {
+    let list = this.state[listName];
     list = [...list];
     list.splice(index, 1);
-    this.setState({ list });
+    this.setState({ [listName]: list });
   };
 
-  handleEdit = index => {
+  handleEdit = (index, listName) => {
     const todo = event.target.value;
-    const list = [...this.state.list];
+    const list = [...this.state[listName]];
     list[index] = todo;
-    this.setState({ list });
+    this.setState({ [listName]: list });
+  };
+
+  handleDone = index => {
+    const done = [...this.state.done];
+    const list = [...this.state.list];
+    done.push(list[index]);
+    list.splice(index, 1);
+    this.setState({ done, list });
   };
 
   render() {
-    const { list, word, error } = this.state;
+    const { list, done, word, error } = this.state;
 
     console.log('rendering');
 
@@ -81,14 +91,34 @@ class List extends React.Component {
         />
         <button onClick={this.handleAddItem}>add item</button>
         <p>{error}</p>
+
+        <h1>Todo</h1>
         <ul>
           {list.map((word, index) => (
             <Item
               key={index}
               index={index}
               word={word}
+              list="list"
+              ongoing={true}
               onDelete={this.handleDelete}
               onEdit={this.handleEdit}
+              onDone={this.handleDone}
+            />
+          ))}
+        </ul>
+
+        <h1>Done</h1>
+        <ul>
+          {done.map((word, index) => (
+            <Item
+              key={index}
+              index={index}
+              word={word}
+              list="done"
+              onDelete={this.handleDelete}
+              onEdit={this.handleEdit}
+              onDone={this.handleDone}
             />
           ))}
         </ul>
