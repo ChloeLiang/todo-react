@@ -15,9 +15,16 @@ class List extends React.Component {
   }
 
   handleAddItem = () => {
-    const list = [...this.state.list];
-    list.push(this.state.word);
-    this.setState({ list });
+    let { list, word } = this.state;
+
+    if (word.trim() === '') {
+      return;
+    }
+
+    list = [...list];
+    list.push(word);
+    word = '';
+    this.setState({ list, word });
   };
 
   render() {
