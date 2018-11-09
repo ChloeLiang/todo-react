@@ -40,6 +40,11 @@ class List extends React.Component {
     this.setState({ list, word });
   };
 
+  handleDelete = todo => {
+    const list = this.state.list.filter(t => t !== todo);
+    this.setState({ list });
+  };
+
   render() {
     const { list, word, error } = this.state;
 
@@ -56,7 +61,9 @@ class List extends React.Component {
         <p>{error}</p>
         <ul>
           {list.map((todo, index) => (
-            <li key={index}>{todo}</li>
+            <li key={index} onClick={() => this.handleDelete(todo)}>
+              {todo}
+            </li>
           ))}
         </ul>
       </div>
